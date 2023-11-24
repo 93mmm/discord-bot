@@ -8,8 +8,8 @@ class Consts:
     PHOTO_CARDS: str = "PhotoCards"
 
 class Bot:
-    TOKEN: str = "MTE3Njk0ODI3NjUwNzk4Mzk0Mw.G3rsZV.kmyNVqTyCu0RM-ECeIXwRqFhgf1Zs35B_v0M4E"
-    GUILD_ID: int = 1176988728275775498 # Right click on the server image and click copy id
+    TOKEN: str = "token"
+    GUILD_ID: int = 0 # Right click on the server image and click copy id
     ADMINISTRATORS: list[int] = [0]
 
 class SocCred:
