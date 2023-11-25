@@ -12,7 +12,7 @@ CREATE TABLE "Users" (
 	"UserID"	INTEGER NOT NULL UNIQUE,
   "SpecialSigns" TEXT DEFAULT "",
 	"SocialPoints"	INTEGER DEFAULT 0,
-  "IsInfinity" INTEGER DEFAULT 0, -- 0: get rating from DB; -1: -∞; 1: +∞
+  "IsInfinity" INTEGER DEFAULT 0,
   "PhotoCards" TEXT DEFAULT "",
 	PRIMARY KEY("UserID")
 );
