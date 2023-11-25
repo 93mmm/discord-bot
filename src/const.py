@@ -7,15 +7,18 @@ class Consts:
     IS_INFINITY: str = "IsInfinity"
     PHOTO_CARDS: str = "PhotoCards"
 
+
 class Bot:
     TOKEN: str = "token"
     GUILD_ID: int = 0 # Right click on the server image and click copy id
     ADMINISTRATORS: list[int] = [0]
 
+
 class SocCred:
     GET_FROM_DB: int = 0
-    PL_INFINITY: int = 1
-    MIN_INFINITY: int = 2
+    P_INFINITY: int = 1
+    N_INFINITY: int = 2
+
 
 class UserData:
     def __init__(self, special_signs: str, social_points: str, 
@@ -24,5 +27,3 @@ class UserData:
         self.social_points = social_points
         self.is_infinity = is_infinity
         self.photo_cards = photo_cards
-
-      

@@ -1,8 +1,8 @@
 import discord
 import traceback
 
-from src.db_holder import Database
-from src.const import Consts, SocCred, UserData
+from src.db_holder import Database, soc_rating_in_form, get_soc_rating_for_db
+from src.const import Consts, UserData
 
 
 class NewCard(discord.ui.Modal, title="Дело"):
@@ -35,12 +35,7 @@ class NewCard(discord.ui.Modal, title="Дело"):
         self.user_id = user_id
         self.special_signs.default = data.special_signs
 
-        if data.is_infinity == SocCred.GET_FROM_DB:
-            self.social_points.default = data.social_points
-        elif data.is_infinity == SocCred.PL_INFINITY:
-            self.social_points.default = "+inf"
-        elif data.is_infinity == SocCred.MIN_INFINITY:
-            self.social_points.default = "-inf"
+        self.social_points.default = soc_rating_in_form(data.is_infinity, data.social_points)
 
         self.photo_cards.default = " ".join(data.photo_cards)
 
@@ -48,22 +43,16 @@ class NewCard(discord.ui.Modal, title="Дело"):
         if len(self.photo_cards.value.split(" ")) > 3:
             await interaction.response.send_modal(NewCard())
 
-        soc_cr = 0
-        is_inf = SocCred.GET_FROM_DB
-
-        if self.social_points.value.startswith("+inf"):
-            is_inf = SocCred.PL_INFINITY
-        elif self.social_points.value.startswith("-inf"):
-            is_inf = SocCred.MIN_INFINITY
-        else:
-            soc_cr = int(self.social_points.value)
+        social_points, is_infinity = get_soc_rating_for_db(self.social_points.value)
 
         db: Database = Database(Consts.PATH)
-        db.add_user(self.user_id, self.special_signs.value, soc_cr, is_inf, self.photo_cards.value)
+        if not db.user_exists(self.user_id):
+            db.add_user(self.user_id, self.special_signs.value, social_points, is_infinity, self.photo_cards.value)
+        else:
+            db.edit_user(self.user_id, self.special_signs.value, social_points, is_infinity, self.photo_cards.value)
 
         await interaction.response.send_message("User", ephemeral=True)
 
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
         await interaction.response.send_message('Oops! Something went wrong.', ephemeral=True)
-
         traceback.print_exception(type(error), error, error.__traceback__)

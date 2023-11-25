@@ -1,5 +1,26 @@
 import sqlite3
-from src.const import Consts, UserData
+from src.const import Consts, UserData, SocCred
+
+
+def get_soc_rating_for_db(info: str):
+    social_points = 0
+    is_infinity = SocCred.GET_FROM_DB
+    if info.startswith("+inf"):
+        is_infinity = SocCred.P_INFINITY
+    elif info.startswith("-inf"):
+        is_infinity = SocCred.N_INFINITY
+    else:
+        social_points = int(info)
+    return social_points, is_infinity
+
+
+def soc_rating_in_form(is_infinity: str, points: str):
+    if is_infinity == SocCred.N_INFINITY:
+        return "-inf"
+    elif is_infinity == SocCred.P_INFINITY:
+        return "+inf"
+    return points
+    
 
 class Database:
     def __init__(self, filename: str):
@@ -12,7 +33,6 @@ class Database:
         cur: sqlite3.Cursor = self.connection.cursor()
 
         responce = cur.execute(request).fetchall()
-        print(responce, awaiting_data)
         if awaiting_data:
             return responce
         self.connection.commit()
@@ -28,7 +48,6 @@ class Database:
         except sqlite3.IntegrityError as ex:
             print(ex)
           
-
     def add_user(self, user_id: int, special_signs: str, social_points: str,
                  is_infinity: str, photo_cards: str) -> bool:
         request: str = f"""INSERT INTO {Consts.TABLE_NAME} 
@@ -42,20 +61,18 @@ class Database:
             print(ex)
             return False
     
-
     def edit_user(self, user_id: int, special_signs: str, social_points: str,
                  is_infinity: str, photo_cards: str) -> bool:
-        request = """UPDATE """
+        request = f"""UPDATE {Consts.TABLE_NAME} 
+                     SET {Consts.SPECIAL_SIGNS} = \"{special_signs}\", {Consts.SOCIAL_POINTS} = {social_points}, 
+                     {Consts.IS_INFINITY} = {is_infinity}, {Consts.PHOTO_CARDS} = \"{photo_cards}\" 
+                     WHERE UserID = {user_id}"""
         try: 
             self.execute_request(request)
             return True
         except sqlite3.IntegrityError as ex:
             print(ex)
             return False
-            
-
-
-
     
     def update_rep(self, user_id: int, rep: str) -> bool:
         pass
