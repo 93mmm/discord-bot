@@ -28,10 +28,11 @@ class NewCard(discord.ui.Modal, title="Дело"):
         default="HTML JS React"
     )
 
-    def initialize_id(self, id):
-        self.user_id = id
+    def initialize_id(self, user_id):
+        self.user_id = user_id
     
-    def initialize_userdata(self, data: UserData):
+    def initialize_userdata(self, user_id: int, data: UserData):
+        self.user_id = user_id
         self.special_signs.default = data.special_signs
 
         if data.is_infinity == SocCred.GET_FROM_DB:
@@ -40,8 +41,8 @@ class NewCard(discord.ui.Modal, title="Дело"):
             self.social_points.default = "+inf"
         elif data.is_infinity == SocCred.MIN_INFINITY:
             self.social_points.default = "-inf"
-        
-        self.photo_cards = " ".join(data.photo_cards)
+
+        self.photo_cards.default = " ".join(data.photo_cards)
 
     async def on_submit(self, interaction: discord.Interaction): # TODO: check is user admin
         if len(self.photo_cards.value.split(" ")) > 3:

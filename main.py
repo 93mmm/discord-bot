@@ -39,12 +39,10 @@ async def init(interaction: discord.Interaction, member: discord.Member):
     card: NewCard = NewCard()
     if database.user_exists(member.id):
         user_data: UserData = database.get_data(member.id)
-        print(user_data)
-        card.initialize_userdata(user_data)
+        card.initialize_userdata(member.id, user_data)
         card.title = "Редактировать дело"
     else:
         card.initialize_id(member.id)
-    # TODO: card.social_points.fdsfsdk  --  edit if user exists
     await interaction.response.send_modal(card)
 
 
