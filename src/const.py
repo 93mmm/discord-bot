@@ -23,7 +23,8 @@ class SocCred:
 class UserData:
     def __init__(self, special_signs: str, social_points: str, 
                  is_infinity: str, photo_cards: list[str]) -> None:
-        self.special_signs = special_signs
-        self.social_points = social_points
-        self.is_infinity = is_infinity
-        self.photo_cards = photo_cards
+        self.special_signs: str = special_signs
+        self.social_points: str = social_points
+        self.is_infinity: str = is_infinity
+        self.photo_cards: list[str] = photo_cards
+

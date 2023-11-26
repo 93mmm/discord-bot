@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 
 from src.db_holder import *
-from src.const import Bot 
+from src.const import Bot, UserData
 from src.forms.modals import NewCard
 from src.forms.client import Client
 
@@ -47,8 +47,16 @@ async def init(interaction: discord.Interaction, member: discord.Member):
 
 @client.tree.context_menu(name="Получить дело")
 async def card(interaction: discord.Interaction, member: discord.Member):
+    if not database.user_exists(member.id):
+        await interaction.response.send_message("У пользователя пока что нет карточки", ephemeral=True)
+        return
+    data: UserData = database.get_user_data(member.id)
+
     embed = discord.Embed(title=f"{member.name}#{member.discriminator}", description=f"ID: {member.id}")
-    embed.add_field(name="Important info~", value="Info!")
+    embed.add_field(name="Очки социального рейтинга:", value=soc_rating_in_form(data.social_points, data.is_infinity))
+    embed.add_field(name="Важные приметы:", value=data.special_signs)
+    embed.add_field(name="Награды:", value=" ".join(data.photo_cards))
+    
     await interaction.response.send_message(embed=embed)
 
 
