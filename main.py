@@ -15,19 +15,18 @@ database = Database(Consts.PATH)
 
 @client.event
 async def on_ready():
-    print(f"Logged in as {client.user} (ID: {client.user.id})")
-    print("------")
+    print(f"Logged in as {client.user} (ID: {client.user.id})\n---------")
 
 
 @client.tree.command()
-@app_commands.describe(member="Member to describe", 
-                       social_points="Add social points (+100/-37.428/+inf)")
+@app_commands.describe(member="Пользователь", 
+                       social_points="Укажите очки рейтинга (+100/-37/+inf)")
 async def rep(interaction: discord.Interaction, member: discord.Member=None, social_points: str=""):
     if member is None:
-        await interaction.response.send_message("User is not specified", ephemeral=True)
+        await interaction.response.send_message("Пользователь не указан", ephemeral=True)
         return
     if social_points == "":
-        await interaction.response.send_message("Social points are not specified", ephemeral=True)
+        await interaction.response.send_message("Социальный рейтинг не указан", ephemeral=True)
         return
     
     responce = database.update_rep(member.id, social_points)
@@ -38,8 +37,8 @@ async def rep(interaction: discord.Interaction, member: discord.Member=None, soc
 async def init(interaction: discord.Interaction, member: discord.Member):
     card: NewCard = NewCard()
     if database.user_exists(member.id):
-        user_data: UserData = database.get_data(member.id)
-        card.initialize_userdata(member.id, user_data)
+        user_data: UserData = database.get_user_data(member.id)
+        card.initialize_userdata(member.id, user_data, "Личное дело изменено")
         card.title = "Редактировать дело"
     else:
         card.initialize_id(member.id)
@@ -56,3 +55,4 @@ async def card(interaction: discord.Interaction, member: discord.Member):
 client.run(Bot.TOKEN)
 
 # TODO: check is user admin
+# TODO: localize answers in russian language

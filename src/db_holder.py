@@ -1,8 +1,13 @@
 import sqlite3
+import traceback
+
 from src.const import Consts, UserData, SocCred
 
 
-def get_soc_rating_for_db(info: str):
+def get_soc_rating_for_db(info: str) -> tuple[int, int]:
+    # ! receives string (possible cases: +inf, -inf, +number, -number)
+    # ! returns information that can be fitted into database 
+    # ! (social points: number, is_infinity (rating usage determinator))
     social_points = 0
     is_infinity = SocCred.GET_FROM_DB
     if info.startswith("+inf"):
@@ -14,12 +19,12 @@ def get_soc_rating_for_db(info: str):
     return social_points, is_infinity
 
 
-def soc_rating_in_form(is_infinity: str, points: str):
+def soc_rating_in_form(social_points: str, is_infinity: str):
     if is_infinity == SocCred.N_INFINITY:
         return "-inf"
     elif is_infinity == SocCred.P_INFINITY:
         return "+inf"
-    return points
+    return social_points
     
 
 class Database:
@@ -46,7 +51,7 @@ class Database:
             responce = self.execute_request(request, True)
             return bool(len(responce))
         except sqlite3.IntegrityError as ex:
-            print(ex)
+            traceback.print_exception(type(ex), ex, ex.__traceback__)
           
     def add_user(self, user_id: int, special_signs: str, social_points: str,
                  is_infinity: str, photo_cards: str) -> bool:
@@ -58,7 +63,7 @@ class Database:
             self.execute_request(request)
             return True
         except sqlite3.IntegrityError as ex:
-            print(ex)
+            traceback.print_exception(type(ex), ex, ex.__traceback__)
             return False
     
     def edit_user(self, user_id: int, special_signs: str, social_points: str,
@@ -71,13 +76,10 @@ class Database:
             self.execute_request(request)
             return True
         except sqlite3.IntegrityError as ex:
-            print(ex)
+            traceback.print_exception(type(ex), ex, ex.__traceback__)
             return False
-    
-    def update_rep(self, user_id: int, rep: str) -> bool:
-        pass
-        
-    def get_data(self, user_id: int) -> UserData:
+
+    def get_user_data(self, user_id: int) -> UserData:
         request: str = f"""SELECT * FROM 
                            {Consts.TABLE_NAME}
                            WHERE {Consts.USER_ID}={user_id}"""
@@ -86,4 +88,24 @@ class Database:
             return UserData(responce[0][1], responce[0][2], 
                             responce[0][3], responce[0][4].split())
         except sqlite3.IntegrityError as ex:
-            print(ex)
+            traceback.print_exception(type(ex), ex, ex.__traceback__)
+
+    def update_rep(self, user_id: int, rep: str) -> str:
+        # TODO: if rating == "+-inf", return submit message 
+        if not self.user_exists(user_id):
+            return "Сначала добавьте пользователя"
+        social_points, is_infinity = get_soc_rating_for_db(rep)
+        insertion = social_points
+        if is_infinity == SocCred.GET_FROM_DB:
+            request: str = f"""SELECT {Consts.SOCIAL_POINTS} FROM 
+                           {Consts.TABLE_NAME}
+                           WHERE {Consts.USER_ID}={user_id}"""
+            insertion += int(self.execute_request(request, True)[0][0])
+            
+        request: str = f"""UPDATE {Consts.TABLE_NAME} SET 
+                           {Consts.SOCIAL_POINTS} = {insertion}, {Consts.IS_INFINITY} = {is_infinity}
+                           WHERE {Consts.USER_ID}={user_id}"""
+        self.execute_request(request, False)
+        data: UserData = self.get_user_data(user_id)
+        curr_rate = soc_rating_in_form(data.social_points, data.is_infinity)
+        return f"Текущий рейтинг пользователя: {curr_rate}"
