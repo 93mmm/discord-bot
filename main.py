@@ -4,7 +4,7 @@ from discord import app_commands
 from src.db_holder import *
 from src.const import Bot, UserData
 from src.forms.modals import NewCard
-from src.forms.client import Client
+from src.client import Client
 
 
 intents = discord.Intents.all()
