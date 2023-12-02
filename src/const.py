@@ -1,14 +1,5 @@
-class Consts:
-    PATH: str = "files/database/database.db"
-    TABLE_NAME: str = "Users"
-    USER_ID: str = "UserID"
-    SPECIAL_SIGNS: str = "SpecialSigns"
-    SOCIAL_POINTS: str = "SocialPoints"
-    IS_INFINITY: str = "IsInfinity"
-    PHOTO_CARDS: str = "PhotoCards"
-
-
 class Bot:
+    DB_PATH: str = "files/database/database.db"
     TOKEN: str = "token"
     GUILD_ID: int = 0 # Right click on the server image and click copy id
     ADMINISTRATORS: list[int] = [0]
@@ -28,3 +19,4 @@ class UserData:
         self.is_infinity: str = is_infinity
         self.photo_cards: list[str] = photo_cards
 
+# TODO: +inf -inf только при заведении  карточки

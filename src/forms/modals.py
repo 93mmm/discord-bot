@@ -2,7 +2,7 @@ import discord
 import traceback
 
 from src.db_holder import Database, soc_rating_in_form, get_soc_rating_for_db
-from src.const import Consts, UserData
+from src.const import UserData, Bot
 
 
 class NewCard(discord.ui.Modal, title="Дело"):
@@ -42,7 +42,7 @@ class NewCard(discord.ui.Modal, title="Дело"):
     async def on_submit(self, interaction: discord.Interaction): # TODO: check is user admin
         social_points, is_infinity = get_soc_rating_for_db(self.social_points.value)
 
-        db: Database = Database(Consts.PATH)
+        db: Database = Database(Bot.DB_PATH)
         if not db.user_exists(self.user_id):
             db.add_user(self.user_id, self.special_signs.value, social_points, is_infinity, self.photo_cards.value)
         else:
