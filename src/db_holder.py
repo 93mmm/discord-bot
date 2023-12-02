@@ -1,8 +1,8 @@
 import sqlite3
 import traceback
 
-from src.const import UserData, SocCred
-from src.helpers import get_soc_rating_for_db, soc_rating_in_form
+from src.helpers.const import UserData, SocCred
+from src.helpers.helpers import get_soc_rating_for_db, soc_rating_in_form
 
 
 class Database:

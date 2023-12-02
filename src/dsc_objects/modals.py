@@ -2,7 +2,7 @@ import discord
 import traceback
 
 from src.db_holder import Database, soc_rating_in_form, get_soc_rating_for_db
-from src.const import UserData, Bot
+from src.helpers.const import UserData, Bot
 
 
 class NewCard(discord.ui.Modal, title="Дело"):

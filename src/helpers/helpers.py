@@ -1,4 +1,4 @@
-from src.const import SocCred
+from src.helpers.const import SocCred
 
 
 def get_soc_rating_for_db(info: str) -> tuple[int, int]:

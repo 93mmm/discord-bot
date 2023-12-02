@@ -2,9 +2,9 @@ import discord
 from discord import app_commands
 
 from src.db_holder import *
-from src.const import Bot, UserData
-from src.forms.modals import NewCard
-from src.client import Client
+from src.helpers.const import Bot, UserData
+from src.dsc_objects.modals import NewCard
+from src.dsc_objects.client import Client
 
 
 intents = discord.Intents.all()

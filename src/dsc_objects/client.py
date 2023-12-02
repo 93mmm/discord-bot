@@ -1,5 +1,5 @@
 import discord
-from src.const import Bot
+from src.helpers.const import Bot
 from discord import app_commands
 
 
