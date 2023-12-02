@@ -1,8 +1,12 @@
 import discord
 from discord import app_commands
 
-from src.db_holder import *
+from PIL import Image
+
+from src.image import ImageProcessor
+from src.db_holder import Database
 from src.helpers.const import Bot, UserData
+from src.helpers.helpers import soc_rating_in_form
 from src.dsc_objects.modals import NewCard
 from src.dsc_objects.client import Client
 
@@ -11,7 +15,7 @@ intents = discord.Intents.all()
 client = Client(intents=intents)
 
 database = Database(Bot.DB_PATH)
-
+image = ImageProcessor()
 
 @client.event
 async def on_ready():
@@ -56,8 +60,11 @@ async def card(interaction: discord.Interaction, member: discord.Member):
     embed.add_field(name="Очки социального рейтинга:", value=soc_rating_in_form(data.social_points, data.is_infinity))
     embed.add_field(name="Важные приметы:", value=data.special_signs)
     embed.add_field(name="Награды:", value=" ".join(data.photo_cards))
-
-    await interaction.response.send_message(embed=embed)
+    
+    file = image.draw_assets("User!")
+    f = discord.File(fp=file.filename())
+    file.close()
+    await interaction.response.send_message(embed=embed, file=f)
 
 
 client.run(Bot.TOKEN)
