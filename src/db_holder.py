@@ -21,7 +21,7 @@ class Database:
         self.connection.commit()
       
     def user_exists(self, user_id: int) -> bool:
-        request: str = f"""SELECT UserID FROM Users WHERE UserID={user_id}"""
+        request: str = f"SELECT UserID FROM Users WHERE UserID={user_id}"
         
         try: 
             responce = self.execute_request(request, True)
@@ -31,10 +31,8 @@ class Database:
           
     def add_user(self, user_id: int, special_signs: str, social_points: str,
                  is_infinity: str, photo_cards: str) -> bool:
-        request: str = f"""INSERT INTO Users
-                           ( UserID, SpecialSigns, SocialPoints, IsInfinity, PhotoCards )
-                           VALUES
-                           ( {user_id}, \"{special_signs}\", {social_points}, {is_infinity}, \"{photo_cards}\" )"""
+        request: str = "INSERT INTO Users ( UserID, SpecialSigns, SocialPoints, IsInfinity, PhotoCards ) VALUES " \
+                       f"( {user_id}, \"{special_signs}\", {social_points}, {is_infinity}, \"{photo_cards}\" )"
         try: 
             self.execute_request(request)
             return True
@@ -44,10 +42,10 @@ class Database:
     
     def edit_user(self, user_id: int, special_signs: str, social_points: str,
                  is_infinity: str, photo_cards: str) -> bool:
-        request = f"""UPDATE Users
-                     SET SpecialSigns = \"{special_signs}\", SocialPoints = {social_points}, 
-                     IsInfinity = {is_infinity}, PhotoCards = \"{photo_cards}\" 
-                     WHERE UserID = {user_id}"""
+        request = "UPDATE Users " \
+                  f"SET SpecialSigns = \"{special_signs}\", SocialPoints = {social_points}, " \
+                  f"IsInfinity = {is_infinity}, PhotoCards = \"{photo_cards}\" " \
+                  f"WHERE UserID = {user_id}"
         try: 
             self.execute_request(request)
             return True
@@ -56,8 +54,7 @@ class Database:
             return False
 
     def get_user_data(self, user_id: int) -> UserData:
-        request: str = f"""SELECT * FROM Users
-                           WHERE UserID={user_id}"""
+        request: str = f"SELECT * FROM Users WHERE UserID={user_id}"
         try: 
             responce = self.execute_request(request, True)
             return UserData(responce[0][1], responce[0][2], 
@@ -72,13 +69,12 @@ class Database:
         social_points, is_infinity = get_soc_rating_for_db(rep)
         insertion = social_points
         if is_infinity == SocCred.GET_FROM_DB:
-            request: str = f"""SELECT SocialPoints FROM Users
-                           WHERE UserID={user_id}"""
+            request: str = f"SELECT SocialPoints FROM Users WHERE UserID={user_id}"
             insertion += int(self.execute_request(request, True)[0][0])
             
-        request: str = f"""UPDATE Users SET 
-                           SocialPoints = {insertion}, IsInfinity = {is_infinity}
-                           WHERE UserID={user_id}"""
+        request: str = "UPDATE Users SET " \
+                       f"SocialPoints = {insertion}, IsInfinity = {is_infinity} " \
+                       f"WHERE UserID={user_id}"
         self.execute_request(request, False)
         data: UserData = self.get_user_data(user_id)
         curr_rate = soc_rating_in_form(data.social_points, data.is_infinity)

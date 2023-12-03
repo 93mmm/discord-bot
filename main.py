@@ -70,4 +70,3 @@ async def card(interaction: discord.Interaction, member: discord.Member):
 client.run(Bot.TOKEN)
 
 # TODO: check is user admin
-# TODO: localize answers in russian language
