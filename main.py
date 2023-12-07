@@ -54,12 +54,12 @@ async def card(interaction: discord.Interaction, member: discord.Member):
     if not database.user_exists(member.id):
         await interaction.response.send_message("У пользователя пока что нет карточки", ephemeral=True)
         return
-    data: UserData = database.get_user_data(member.id)
+    data: UserData = database.get_user_data(member.id, f"{member.name}#{member.discriminator}")
 
     embed = discord.Embed(title=f"{member.name}#{member.discriminator}", description=f"ID: {member.id}")
     embed.add_field(name="Очки социального рейтинга:", value=soc_rating_in_form(data.social_points, data.is_infinity))
     embed.add_field(name="Важные приметы:", value=data.special_signs)
-    embed.add_field(name="Награды:", value=" ".join(data.photo_cards))
+    embed.add_field(name="Награды:", value=" ".join(data.photo_paths))
     
     file = image.draw_assets("User!")
     f = discord.File(fp=file.filename())

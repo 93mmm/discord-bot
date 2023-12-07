@@ -22,3 +22,10 @@ def soc_rating_in_form(social_points: str, is_infinity: str):
     elif is_infinity == SocCred.P_INFINITY:
         return "+inf"
     return social_points
+
+def iter_arrs(*args):
+    for i in range(min(map(len, args))):
+        out = list()
+        for a in args:
+            out.append(a[i])
+        yield out

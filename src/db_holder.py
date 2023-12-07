@@ -53,7 +53,7 @@ class Database:
             traceback.print_exception(type(ex), ex, ex.__traceback__)
             return False
 
-    def get_user_data(self, user_id: int) -> UserData:
+    def get_user_data(self, user_id: int, name: str) -> UserData:
         request: str = f"SELECT * FROM Users WHERE UserID={user_id}"
         try: 
             responce = self.execute_request(request, True)
@@ -76,6 +76,6 @@ class Database:
                        f"SocialPoints = {insertion}, IsInfinity = {is_infinity} " \
                        f"WHERE UserID={user_id}"
         self.execute_request(request, False)
-        data: UserData = self.get_user_data(user_id)
+        data: UserData = self.get_user_data(user_id, "")
         curr_rate = soc_rating_in_form(data.social_points, data.is_infinity)
         return f"Текущий рейтинг пользователя: {curr_rate}"

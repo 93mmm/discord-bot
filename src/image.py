@@ -1,6 +1,8 @@
 from PIL import Image, ImageDraw, ImageFont
 from uuid import uuid4
 from os import remove
+from src.helpers.const import UserData, Assets, Positions, Fonts
+from src.helpers.helpers import iter_arrs
 
 
 class TmpImg:
@@ -16,22 +18,47 @@ class TmpImg:
 
 class ImageProcessor:
     def __init__(self) -> None:
-        self._font: ImageFont = ImageFont.truetype("files/fonts/m.ttf", 40)
+        self._headings: ImageFont = ImageFont.truetype(Fonts.HEADINGS, 35)
+        self._plain: ImageFont = ImageFont.truetype(Fonts.PLAIN, 24)
         self._assets: dict[ImageProcessor] = dict()
     
     def __del__(self) -> None:
         for el in self._assets.values():
             el.close()
     
-    def draw_assets(self, user: str) -> TmpImg:
+    def _parse_text(self, text: str) -> list[str]:
+        text: list[str] = text.split()
+        out: list[str] = list()
+        increment: int = 0
+
+        while self._plain.getlength(" ".join(text[:increment])) < Positions.FIRST_ROW_LEN and increment < len(text):
+            increment += 1
+        else:
+            out.append(" ".join(text[:increment - 1]))
+            text = text[increment - 1:]
+
+        while text != list():
+            while self._plain.getlength(" ".join(text[:increment])) < Positions.NEXT_ROW_LEN and increment < len(text):
+                increment += 1
+            else:
+                out.append(" ".join(text[:increment - 1]))
+                text = text[increment - 1:]
+
+        return out
+    
+    def draw_assets(self, user: UserData) -> TmpImg:
         image: TmpImg = TmpImg()
-        with Image.open("files/assets/screen.png").convert("RGBA") as img:
-            d = ImageDraw.Draw(img)
-            d.text((10, 10), "Hello", font=self._font, fill=(255, 255, 255, 255))
+        with Image.open(Assets.CARD).convert("RGBA") as editable_image:
+            d = ImageDraw.Draw(editable_image)
+            d.text(Positions.NAME, user.name, font=self._headings, fill=(0, 0, 0, 255))
             
-            with Image.open("files/assets/js.jpeg").convert("RGBA") as p:
-                img.paste(im=p, box=(30, 40))
-            
-            fn = f"files/tmp/{uuid4()}.png"
-            img.save(image.filename(), "PNG")
+            for pos, txt in iter_arrs(Positions.SPECIAL_SIGNS, self._parse_text(user.special_signs)):
+                d.text(pos, txt, font=self._plain, fill=(0, 0, 0, 255))
+                
+            for i, p in enumerate(user.photo_paths):
+                with Image.open(p).convert("RGBA") as pastable:
+                    editable_image.paste(im=pastable, box=Positions.PHOTO_CARDS[i], mask=pastable)
+
+            editable_image.save(image.filename(), "PNG")
+            editable_image.show()
         return image
