@@ -1,3 +1,5 @@
+from random import randint
+
 class Bot:
     DB_PATH: str = "files/database/database.db"
     TOKEN: str = "token"
@@ -65,6 +67,16 @@ class Positions:
     FIRST_ROW_LEN: int = 300
     NEXT_ROW_LEN: int = 540
     
+    PRINT_SIZE: tuple[int, int] = (256, 256)
+    
+    def PRINT_POS() -> tuple[int, int]:
+        PRINT_X = 550
+        PRINT_Y = 60
+        return (PRINT_X + randint(0, 40), PRINT_Y + randint(0, 40))
+    
+    def PRINT_ANGLE() -> int:
+        return -15 + randint(-5, 10)
+    
 
 class UserData:
     def __init__(self, name: str, special_signs: str, social_points: str, 
@@ -73,12 +85,12 @@ class UserData:
         self.special_signs: str = special_signs
         self.social_points: str = social_points
         self.is_infinity: str = is_infinity
-        self.photo_paths: list[str] = self._get_paths(photo_cards)
+        self.photo_cards: list[str] = photo_cards
     
-    def _get_paths(self, cards: list[str]) -> list[str]:
-        for i in range(len(cards)):
-            cards[i] = Assets.ASSETS[cards[i].lower()]
-        return cards
+    def get_paths(self) -> list[str]:
+        for i in range(len(self.photo_cards)):
+            self.photo_cards[i] = Assets.ASSETS[self.photo_cards[i].lower()]
+        return self.photo_cards
 
 
 # TODO: +inf -inf только при заведении  карточки

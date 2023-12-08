@@ -41,7 +41,7 @@ async def rep(interaction: discord.Interaction, member: discord.Member=None, soc
 async def init(interaction: discord.Interaction, member: discord.Member):
     card: NewCard = NewCard()
     if database.user_exists(member.id):
-        user_data: UserData = database.get_user_data(member.id)
+        user_data: UserData = database.get_user_data(member.id, "")
         card.initialize_userdata(member.id, user_data, "Личное дело изменено")
         card.title = "Редактировать дело"
     else:
@@ -56,15 +56,11 @@ async def card(interaction: discord.Interaction, member: discord.Member):
         return
     data: UserData = database.get_user_data(member.id, f"{member.name}#{member.discriminator}")
 
-    embed = discord.Embed(title=f"{member.name}#{member.discriminator}", description=f"ID: {member.id}")
-    embed.add_field(name="Очки социального рейтинга:", value=soc_rating_in_form(data.social_points, data.is_infinity))
-    embed.add_field(name="Важные приметы:", value=data.special_signs)
-    embed.add_field(name="Награды:", value=" ".join(data.photo_paths))
-    
-    file = image.draw_assets("User!")
+    file = image.draw_assets(data)
     f = discord.File(fp=file.filename())
     file.close()
-    await interaction.response.send_message(embed=embed, file=f)
+
+    await interaction.response.send_message(file=f)
 
 
 client.run(Bot.TOKEN)
