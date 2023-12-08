@@ -1,5 +1,10 @@
 # discord-bot
 
+### configure environment
+```bash
+make env
+```
+
 ### install:
 ```bash
 make install
