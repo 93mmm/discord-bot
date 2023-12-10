@@ -55,7 +55,8 @@ async def card(interaction: discord.Interaction, member: discord.Member):
         await interaction.response.send_message("У пользователя пока что нет карточки", ephemeral=True)
         return
     data: UserData = database.get_user_data(member.id, f"{member.name}#{member.discriminator}")
-
+    
+    print("username:", data.name)
     file = image.draw_assets(data)
     f = discord.File(fp=file.filename())
     file.close()

@@ -57,7 +57,7 @@ class Database:
         request: str = f"SELECT * FROM Users WHERE UserID={user_id}"
         try: 
             responce = self.execute_request(request, True)
-            return UserData("", responce[0][1], responce[0][2], 
+            return UserData(name, responce[0][1], responce[0][2], 
                             responce[0][3], responce[0][4].split())
         except sqlite3.IntegrityError as ex:
             traceback.print_exception(type(ex), ex, ex.__traceback__)
