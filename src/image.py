@@ -3,9 +3,8 @@ from uuid import uuid4
 from os import remove
 from random import randint
 
-from src.helpers.const import UserData, Assets, Positions, Fonts
-from src.helpers.helpers import iter_arrs
-
+from helpers.const import UserData, Assets, Positions, Fonts
+from helpers.helpers import iter_arrs
 
 class TmpImg:
     def __init__(self) -> None:

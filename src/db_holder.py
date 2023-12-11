@@ -1,8 +1,8 @@
 import sqlite3
 import traceback
 
-from src.helpers.const import UserData, SocCred
-from src.helpers.helpers import get_soc_rating_for_db, soc_rating_in_form
+from helpers.const import UserData, SocCred
+from helpers.helpers import get_unreadable_social_credits, get_readable_social_credits
 
 
 class Database:
@@ -29,10 +29,10 @@ class Database:
         except sqlite3.IntegrityError as ex:
             traceback.print_exception(type(ex), ex, ex.__traceback__)
           
-    def add_user(self, user_id: int, special_signs: str, social_points: str,
+    def add_user(self, user_id: int, special_signs: str, social_credits: str,
                  is_infinity: str, photo_cards: str) -> bool:
         request: str = "INSERT INTO Users ( UserID, SpecialSigns, SocialPoints, IsInfinity, PhotoCards ) VALUES " \
-                       f"( {user_id}, \"{special_signs}\", {social_points}, {is_infinity}, \"{photo_cards}\" )"
+                       f"( {user_id}, \"{special_signs}\", {social_credits}, {is_infinity}, \"{photo_cards}\" )"
         try: 
             self.execute_request(request)
             return True
@@ -40,10 +40,10 @@ class Database:
             traceback.print_exception(type(ex), ex, ex.__traceback__)
             return False
     
-    def edit_user(self, user_id: int, special_signs: str, social_points: str,
+    def edit_user(self, user_id: int, special_signs: str, social_credits: str,
                  is_infinity: str, photo_cards: str) -> bool:
         request = "UPDATE Users " \
-                  f"SET SpecialSigns = \"{special_signs}\", SocialPoints = {social_points}, " \
+                  f"SET SpecialSigns = \"{special_signs}\", SocialPoints = {social_credits}, " \
                   f"IsInfinity = {is_infinity}, PhotoCards = \"{photo_cards}\" " \
                   f"WHERE UserID = {user_id}"
         try: 
@@ -66,8 +66,8 @@ class Database:
         # TODO: if rating == "+-inf", return submit message 
         if not self.user_exists(user_id):
             return "Сначала добавьте пользователя"
-        social_points, is_infinity = get_soc_rating_for_db(rep)
-        insertion = social_points
+        social_credits, is_infinity = get_unreadable_social_credits(rep)
+        insertion = social_credits
         if is_infinity == SocCred.GET_FROM_DB:
             request: str = f"SELECT SocialPoints FROM Users WHERE UserID={user_id}"
             insertion += int(self.execute_request(request, True)[0][0])
@@ -77,5 +77,5 @@ class Database:
                        f"WHERE UserID={user_id}"
         self.execute_request(request, False)
         data: UserData = self.get_user_data(user_id, "")
-        curr_rate = soc_rating_in_form(data.social_points, data.is_infinity)
+        curr_rate = get_readable_social_credits(data.social_credits, data.is_infinity)
         return f"Текущий рейтинг пользователя: {curr_rate}"
