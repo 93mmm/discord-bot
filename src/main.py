@@ -14,6 +14,7 @@ intents = discord.Intents.all()
 client = Client(intents=intents)
 
 database = Database(config['db_path'])
+database.create_table()
 image = ImageProcessor()
 
 @client.event
@@ -31,8 +32,8 @@ async def csc(interaction: discord.Interaction, member: discord.Member=None, soc
         await interaction.response.send_message("Социальный рейтинг не указан", ephemeral=True)
         return
     
-    responce = database.update_rep(member.id, social_credits)
-    await interaction.response.send_message(responce, ephemeral=True)
+    response = database.update_rep(member.id, social_credits)
+    await interaction.response.send_message(response, ephemeral=True)
 
 
 @client.tree.context_menu(name="Завести дело")
