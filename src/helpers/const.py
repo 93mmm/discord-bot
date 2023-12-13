@@ -1,17 +1,9 @@
 from random import randint
 
-class Bot:
-    DB_PATH: str = "files/database/database.db"
-    TOKEN: str = "token"
-    GUILD_ID: int = 0 # Right click on the server image and click copy id
-    ADMINISTRATORS: list[int] = [0]
-
-
 class SocCred:
     GET_FROM_DB: int = 0
-    P_INFINITY: int = 1
-    N_INFINITY: int = 2
-
+    P_INFINITY:  int = 1
+    N_INFINITY:  int = 2
 
 class Assets:
     ASSETS: dict[str, str] = dict()
@@ -46,11 +38,9 @@ class Assets:
     PRINT: str = "files/assets/Печать.png"
     CARD: str = "files/assets/Карточка_социального_рейтинга.png"
 
-
 class Fonts:
     HEADINGS: str = "files/fonts/tahyp.ttf"
     PLAIN: str = "files/fonts/ttwp.ttf"
-
 
 class Positions:
     NAME: tuple[int, int] = (130, 63)
@@ -76,14 +66,13 @@ class Positions:
     
     def PRINT_ANGLE() -> int:
         return -15 + randint(-5, 10)
-    
 
 class UserData:
-    def __init__(self, name: str, special_signs: str, social_points: str, 
+    def __init__(self, name: str, special_signs: str, social_credits: str, 
                  is_infinity: str, photo_cards: list[str]) -> None:
         self.name: str = name
         self.special_signs: str = special_signs
-        self.social_points: str = social_points
+        self.social_credits: str = social_credits
         self.is_infinity: str = is_infinity
         self.photo_cards: list[str] = photo_cards
     
@@ -91,6 +80,5 @@ class UserData:
         for i in range(len(self.photo_cards)):
             self.photo_cards[i] = Assets.ASSETS[self.photo_cards[i].lower()]
         return self.photo_cards
-
 
 # TODO: +inf -inf только при заведении  карточки

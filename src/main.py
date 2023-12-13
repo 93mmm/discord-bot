@@ -1,44 +1,43 @@
 import discord
 from discord import app_commands
-
 from PIL import Image
 
-from src.image import ImageProcessor
-from src.db_holder import Database
-from src.helpers.const import Bot, UserData
-from src.helpers.helpers import soc_rating_in_form
-from src.dsc_objects.modals import NewCard
-from src.dsc_objects.client import Client
+from image import ImageProcessor
+from db_holder import Database
+from helpers.const import UserData
+from dsc_objects.modals import NewCard
+from dsc_objects.client import Client
+from config import get_config
 
-
+config = get_config()
 intents = discord.Intents.all()
 client = Client(intents=intents)
 
-database = Database(Bot.DB_PATH)
+database = Database(config['db_path'])
+database.create_table()
 image = ImageProcessor()
 
 @client.event
 async def on_ready():
-    print(f"Logged in as {client.user} (ID: {client.user.id})\n---------")
-
+    print(f"Logged in as {client.user} (ID: {client.user.id})\n" + "=" * 47)
 
 @client.tree.command()
 @app_commands.describe(member="Пользователь", 
-                       social_points="Укажите очки рейтинга (+100/-37/+inf)")
-async def rep(interaction: discord.Interaction, member: discord.Member=None, social_points: str=""):
+                       social_credits="Укажите очки рейтинга (+100/-37/+inf)")
+async def csc(interaction: discord.Interaction, member: discord.Member=None, social_credits: str=""):
     if member is None:
         await interaction.response.send_message("Пользователь не указан", ephemeral=True)
         return
-    if social_points == "":
+    if social_credits == "":
         await interaction.response.send_message("Социальный рейтинг не указан", ephemeral=True)
         return
     
-    responce = database.update_rep(member.id, social_points)
-    await interaction.response.send_message(responce, ephemeral=True)
+    response = database.update_rep(member.id, social_credits)
+    await interaction.response.send_message(response, ephemeral=True)
 
 
 @client.tree.context_menu(name="Завести дело")
-async def init(interaction: discord.Interaction, member: discord.Member):
+async def init_case(interaction: discord.Interaction, member: discord.Member):
     card: NewCard = NewCard()
     if database.user_exists(member.id):
         user_data: UserData = database.get_user_data(member.id, "")
@@ -50,7 +49,7 @@ async def init(interaction: discord.Interaction, member: discord.Member):
 
 
 @client.tree.context_menu(name="Получить дело")
-async def card(interaction: discord.Interaction, member: discord.Member):
+async def get_card(interaction: discord.Interaction, member: discord.Member):
     if not database.user_exists(member.id):
         await interaction.response.send_message("У пользователя пока что нет карточки", ephemeral=True)
         return
@@ -63,7 +62,6 @@ async def card(interaction: discord.Interaction, member: discord.Member):
 
     await interaction.response.send_message(file=f)
 
-
-client.run(Bot.TOKEN)
+client.run(config['token'])
 
 # TODO: check is user admin
