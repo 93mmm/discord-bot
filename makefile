@@ -1,9 +1,17 @@
+ifeq ($(OS), Windows_NT)
+	PYTHON_PIP = pip
+	PYTHON     = python
+else
+	PYTHON_PIP = pip3
+	PYTHON     = python3
+endif
+
 install:
-		pip3 install -r requirements.txt
-		
+	sh venv/bin/activate && $(PYTHON_PIP) install -r requirements.txt
+
 run:
-		python3 main.py
+	sh venv/bin/activate && $(PYTHON) src/main.py
 
 env:
-		python3 -m venv venv
-		source venv/bin/activate
+	$(PYTHON) -m venv venv
+

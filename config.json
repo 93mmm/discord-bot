@@ -1,0 +1,8 @@
+{
+  "token": "YOUR-TOKEN",
+  "guild-id": 0,
+  "administrators": [
+    0,
+    1
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "assets": {
+    "амёба": "files/assets/Амёба_ебаная.png",
+    "анархист": "files/assets/Анархист.png",
+    "анимешник": "files/assets/Анимешник.png",
+    "верун": "files/assets/Верун.png",
+    "виндузятник": "files/assets/Виндузятник.png",
+    "вкатун": "files/assets/Вкатуноид.png",
+    "герой-сервера": "files/assets/Герою_сервера.png",
+    "жид": "files/assets/Жыд.png",
+    "занятой": "files/assets/Занятой.png",
+    "засвободец": "files/assets/Засвободец.png",
+    "зумер": "files/assets/Зумер.png",
+    "исламист": "files/assets/Исламист.png",
+    "киберспортсмен": "files/assets/Киберспортсмен.png",
+    "коммунист": "files/assets/Коммуняка.png",
+    "лгбт": "files/assets/ЛГБТ_СЖВ.png",
+    "маковец": "files/assets/Маковец.png",
+    "тролль": "files/assets/Мамкин_тролепан.png",
+    "меломан": "files/assets/Меломан_говноед.png",
+    "работяга": "files/assets/Работяга.png",
+    "рядовой": "files/assets/Рядовой.png",
+    "фашист": "files/assets/Фошизд.png",
+
+    "python": "files/assets/Питонист.png",
+    "c++": "files/assets/Плюсовик.png",
+    "rust": "files/assets/Растер.png",
+    "js": "files/assets/Яваскриптизёр.png",
+    "linux": "files/assets/Линуксоид.png"
+  },
+  "print": "files/assets/Печать.png",
+  "card": "files/assets/Карточка_социального_рейтинга.png",
+  "database": "files/database/database.db",
+  "headings": "files/fonts/tahyp.ttf",
+  "plain": "files/fonts/ttwp.ttf"
+}

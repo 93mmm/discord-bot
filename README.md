@@ -22,9 +22,9 @@ make run
 CREATE TABLE "Users" (
   "UserID"        INTEGER NOT NULL UNIQUE,
   "SpecialSigns"  TEXT DEFAULT "",
-  "SocialPoints"  INTEGER DEFAULT 0,
+  "SocialCredits" INTEGER DEFAULT 0,
   "IsInfinity"    INTEGER DEFAULT 0,
-  "PhotoCards"    TEXT DEFAULT "",
+  "Badges"        TEXT DEFAULT "",
   PRIMARY KEY("UserID")
 );
 ```
