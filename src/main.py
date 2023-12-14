@@ -1,7 +1,7 @@
 import discord as ds
 
 from database import Database
-from helpers import User
+from helpers import User, get_errmsg_rep
 from constants import PATHS, CONFIG
 from forms.modals import NewCard, ExistingCard
 from forms.client import Client
@@ -19,32 +19,19 @@ async def on_ready():
 
 @client.tree.command()
 @ds.app_commands.describe(member="Пользователь",
-                          social_points="Очки рейтинга (+100/-37/etc)")
+                          social_credits="Очки рейтинга (+100/-37/etc)")
 async def rep(interaction: ds.Interaction,
               member: ds.Member=None,
-              social_points: str=""):
-    errmsg: str = ""
-
-    if interaction.user.id not in CONFIG["administrators"]:
-        errmsg = "Вы не админ"
-
-    if member is None:
-        errmsg = "Пользователь не указан"
-
-    if social_points == "":
-        errmsg = "Социальный рейтинг не указан"
-
-    if social_points.startswith("+inf") or social_points.startswith("-inf"):
-        errmsg = "Нельзя указать бесконечный рейтинг"
-
-    if not db.user_exists(member.id):
-        errmsg = "Сначала добавьте пользователя"
-
+              social_credits: str=""):
+    errmsg: str = get_errmsg_rep(interaction.user.id,
+                                 member,
+                                 social_credits,
+                                 db)
     if errmsg != "":
         await interaction.response.send_message(errmsg, ephemeral=True)
         return
 
-    db.update_rep(member.id, int(social_points))
+    db.update_rep(member.id, int(social_credits))
     responce: str = f"Эээ, {member.mention}, тебе " \
                     f"{interaction.user.mention} репутацию повысил"
     await interaction.response.send_message(responce)

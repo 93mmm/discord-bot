@@ -1,4 +1,5 @@
-from constants import SocCred
+from constants import SocCred, CONFIG
+import discord as ds
 
 
 class User:
@@ -49,3 +50,28 @@ def credits_for_form(social_points: str, is_infinity: str):
         return "+inf"
 
     return social_points
+
+
+def get_errmsg_rep(user_id: int,
+                   member: ds.Member,
+                   social_credits: str,
+                   db):
+    if user_id not in CONFIG["administrators"]:
+        return "Вы не админ"
+
+    if member is None:
+        return "Пользователь не указан"
+
+    if social_credits == "":
+        return "Социальный рейтинг не указан"
+
+    if social_credits.startswith("+inf") or social_credits.startswith("-inf"):
+        return "Нельзя указать бесконечный рейтинг"
+
+    if not db.user_exists(member.id):
+        return "Сначала добавьте пользователя"
+
+    if db.get_social_credits(member.id)[1] != SocCred.GET_FROM_DB:
+        return "У пользователя бесконечный рейтинг"
+
+    return ""
