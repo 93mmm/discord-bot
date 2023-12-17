@@ -47,7 +47,7 @@ class Database:
     def update_user(self, usr: User) -> None:
         request: str = "UPDATE Users SET " \
                 f"SpecialSigns = \"{usr.special_signs}\", " \
-                f"Badges = \"{' '.join(usr.badges)}\" " \
+                f"Badges = \"{usr.badges}\" " \
                 f"WHERE UserID = {usr.user_id}"
         self.execute_request(request)
 

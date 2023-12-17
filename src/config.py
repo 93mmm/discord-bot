@@ -16,3 +16,7 @@ def get_config():
 
 def get_paths():
     return get_json("path-config.json")
+
+
+def get_key_config():
+    return get_json("key-config.json")

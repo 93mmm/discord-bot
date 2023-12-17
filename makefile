@@ -15,3 +15,5 @@ run:
 env:
 	$(PYTHON) -m venv venv
 
+test:
+	sh venv/bin/activate && $(PYTHON) src/check-health.py

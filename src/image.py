@@ -1,6 +1,6 @@
 from PIL import ImageFont, Image, ImageDraw
 from constants import PATHS, Positions
-from helpers import TmpImg, User, iter_arrs, print_position, print_angle
+from helpers import TmpImg, User, iter_arrs, print_position, print_angle, rating_to_draw
 
 
 class ImgProcessor:
@@ -31,6 +31,7 @@ class ImgProcessor:
                                  box=Positions.BADGES[i],
                                  mask=badge)
 
+            # Draw print
             with Image.open(PATHS["print"]).convert("RGBA") as yoba_print:
                 yoba_print = yoba_print.resize(Positions.PRINT_SIZE,
                                                Image.Resampling.LANCZOS)
@@ -39,6 +40,12 @@ class ImgProcessor:
                 canvas.paste(im=yoba_print,
                              box=print_position(),
                              mask=yoba_print)
+
+            # Draw social credits
+            d.text(Positions.SOCIAL_CREDITS,
+                   rating_to_draw(usr),
+                   font=self._headings,
+                   fill=(0, 0, 0, 255))
 
             canvas.save(image.filename(), "PNG")
         return image
@@ -74,5 +81,4 @@ class ImgProcessor:
             out.append(" ".join(row))
             row = list()
 
-        print(out)
         return out

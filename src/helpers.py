@@ -3,7 +3,7 @@ from uuid import uuid4
 from os import remove
 from random import randint
 
-from constants import SocCred, CONFIG, PATHS
+from constants import SocCred, CONFIG, PATHS, KEY_CONFIG
 
 
 class User:
@@ -71,6 +71,14 @@ def credits_for_form(social_points: str, is_infinity: str):
     return social_points
 
 
+def rating_to_draw(usr: User) -> str:
+    if usr.is_infinity == SocCred.GET_FROM_DB:
+        return str(usr.social_credits)
+    elif usr.is_infinity == SocCred.P_INFINITY:
+        return "Бесконечно крутой"
+    return "Лошара"
+
+
 def get_errmsg_rep(user_id: int,
                    member: ds.Member,
                    social_credits: str,
@@ -105,10 +113,36 @@ def iter_arrs(*args):
 
 
 def print_position() -> tuple[int, int]:
-    x: int = 550 + randint(0, 40)
-    y: int = 60 + randint(0, 40)
+    x: int = 535 + randint(0, 40)
+    y: int = 130 + randint(0, 40)
     return (x, y)
 
 
 def print_angle() -> int:
     return -15 + randint(-5, 10)
+
+
+def get_keys(keys: str) -> tuple[list[str], list[str]]:
+    def get_proper_key(key: str) -> str:
+        key = key.lower()
+        if key in KEY_CONFIG["badges"]:
+            return key
+
+        for k, v in KEY_CONFIG["badges"].items():
+            if key in v:
+                return k
+        return ""
+
+    keys = keys.split(" ")
+
+    proper_badge_array: list[str] = list()
+    wrong_badge_array: list[str] = list()
+
+    for badge in keys:
+        proper_badge: str = get_proper_key(badge)
+        if proper_badge == "":
+            wrong_badge_array.append(badge)
+        else:
+            proper_badge_array.append(proper_badge)
+
+    return (proper_badge_array, wrong_badge_array)

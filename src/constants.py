@@ -1,4 +1,4 @@
-from config import get_config, get_paths
+from config import get_config, get_paths, get_key_config
 
 
 class SocCred:
@@ -21,12 +21,13 @@ class Positions:
             540
             ]
 
-    SOCIAL_CREDITS: tuple[int, int] = (0, 0)
+    SOCIAL_CREDITS: tuple[int, int] = (375, 330)
 
     BADGES: list[tuple[int, int]] = [
-        (210, 115),
-        (330, 115),
-        (450, 115)
+        (195, 115),
+        (295, 115),
+        (395, 115),
+        (495, 115)
         ]
 
     PRINT_SIZE: tuple[int, int] = (256, 256)
@@ -34,3 +35,4 @@ class Positions:
 
 PATHS: dict = get_paths()
 CONFIG: dict = get_config()
+KEY_CONFIG: dict = get_key_config()
