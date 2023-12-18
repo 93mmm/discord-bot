@@ -63,7 +63,7 @@ async def get(interaction: ds.Interaction, member: ds.Member):
 
     processed = imgage_processor.draw_assets(data,
                                              f"{member.name}#"
-                                             "{member.discriminator}")
+                                             f"{member.discriminator}")
     uploaded_file = ds.File(fp=processed.filename())
     processed.close()
     await interaction.response.send_message(file=uploaded_file)

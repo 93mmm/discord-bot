@@ -26,6 +26,8 @@ class ImgProcessor:
 
             # Draw badges
             for i, p in enumerate(usr.get_paths()):
+                if i == len(Positions.BADGES):
+                    break
                 with Image.open(p).convert("RGBA") as badge:
                     canvas.paste(im=badge,
                                  box=Positions.BADGES[i],
