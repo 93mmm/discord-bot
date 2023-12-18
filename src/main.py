@@ -70,7 +70,8 @@ async def get(interaction: ds.Interaction, member: ds.Member):
 
 
 @client.tree.command()
-async def rrr(interaction: ds.Interaction):
+@ds.app_commands.describe(member="Пользователь")
+async def badges(interaction: ds.Interaction, member: ds.Member):
     await interaction.response.send_message(view=DropdownView())
 
 
