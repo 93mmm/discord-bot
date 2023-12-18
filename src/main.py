@@ -2,13 +2,16 @@ import discord as ds
 
 from database import Database
 from helpers import User, get_errmsg_rep
+from image import ImgProcessor
 from constants import PATHS, CONFIG
 from forms.modals import NewCard, ExistingCard
+from forms.dropdown import DropdownView
 from forms.client import Client
 
 
 client: Client = Client(intents=ds.Intents.all())
 db: Database = Database(PATHS["database"])
+imgage_processor: ImgProcessor = ImgProcessor()
 
 
 @client.event
@@ -47,6 +50,28 @@ async def init(interaction: ds.Interaction, member: ds.Member):
     card.initialize(usr)
 
     await interaction.response.send_modal(card)
+
+
+@client.tree.context_menu(name="Получить дело")
+async def get(interaction: ds.Interaction, member: ds.Member):
+    if not db.user_exists(member.id):
+        await interaction.response.send_message("У пользователя "
+                                                "пока что нет карточки",
+                                                ephemeral=True)
+        return
+    data: User = db.get_user(member.id)
+
+    processed = imgage_processor.draw_assets(data,
+                                             f"{member.name}#"
+                                             "{member.discriminator}")
+    uploaded_file = ds.File(fp=processed.filename())
+    processed.close()
+    await interaction.response.send_message(file=uploaded_file)
+
+
+@client.tree.command()
+async def rrr(interaction: ds.Interaction):
+    await interaction.response.send_message(view=DropdownView())
 
 
 client.run(CONFIG["token"])

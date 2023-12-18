@@ -4,7 +4,7 @@ import traceback
 from helpers import User, credits_for_db, get_keys
 from database import Database
 from constants import PATHS
-
+from forms.dropdown import DropdownView
 
 class NewCard(ds.ui.Modal, title="Завести дело"):
     special_signs = ds.ui.TextInput(
@@ -100,5 +100,3 @@ class ExistingCard(ds.ui.Modal, title="Редактировать дело"):
         traceback.print_exception(type(ex), ex, ex.__traceback__)
         await interaction.response.send_message("Что-то пошло не так",
                                                 ephemeral=True)
-
-# TODO: check badges and send message if error
