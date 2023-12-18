@@ -1,0 +1,46 @@
+{
+  "badges": {
+    "lgbt": "files/assets/lgbt.png",
+    "free-wanker": "files/assets/free-wanker.png",
+    "anime": "files/assets/anime.png",
+    "vkatun": "files/assets/vkatun.png",
+    "zoomer": "files/assets/zoomer.png",
+    "troller": "files/assets/troller.png",
+    "amoeba": "files/assets/amoeba.png",
+
+    "communist": "files/assets/communist.png",
+    "anarchist": "files/assets/anarchist.png",
+    "fascist": "files/assets/fascist.png",
+
+    "server-hero": "files/assets/server-hero.png",
+    "busy": "files/assets/busy.png",
+    "hard-worker": "files/assets/hard-worker.png",
+    "private": "files/assets/private.png",
+
+    "believer": "files/assets/believer.png",
+    "atheist": "files/assets/atheist.png",
+    "islamist": "files/assets/islamist.png",
+    "jew": "files/assets/jew.png",
+    "heathen": "files/assets/heathen.png",
+    "sectarian": "files/assets/sectarian.png",
+
+    "cybersport": "files/assets/cybersport.png",
+    "music-lover-shit-eater": "files/assets/music-lover-shit-eater.png",
+
+    "smartphone": "files/assets/smartphone.png",
+    "macos": "files/assets/macos.png",
+    "windows": "files/assets/windows.png",
+    "linux": "files/assets/linux.png",
+
+    "web": "files/assets/web.png",
+    "python": "files/assets/python.png",
+    "c++": "files/assets/c++.png",
+    "rust": "files/assets/rust.png",
+    "js": "files/assets/js.png"
+  },
+  "print": "files/assets/yoba_print.png",
+  "card": "files/assets/card.png",
+  "database": "files/database/database.db",
+  "headings": "files/fonts/tahyp.ttf",
+  "plain": "files/fonts/ttwp.ttf"
+}

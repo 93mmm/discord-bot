@@ -1,67 +1,70 @@
-import discord
-from discord import app_commands
-from PIL import Image
+import discord as ds
 
-from image import ImageProcessor
-from db_holder import Database
-from helpers.const import UserData
-from dsc_objects.modals import NewCard
-from dsc_objects.client import Client
-from config import get_config
+from database import Database
+from helpers import User, get_errmsg_rep
+from image import ImgProcessor
+from constants import PATHS, CONFIG
+from forms.modals import NewCard, ExistingCard
+from forms.client import Client
 
-config = get_config()
-intents = discord.Intents.all()
-client = Client(intents=intents)
 
-database = Database(config['db_path'])
-database.create_table()
-image = ImageProcessor()
+client: Client = Client(intents=ds.Intents.all())
+db: Database = Database(PATHS["database"])
+imgage_processor: ImgProcessor = ImgProcessor()
+
 
 @client.event
 async def on_ready():
-    print(f"Logged in as {client.user} (ID: {client.user.id})\n" + "=" * 47)
+    print(f"Logged in as {client.user} "
+          f"(ID: {client.user.id})\n---------")
+
 
 @client.tree.command()
-@app_commands.describe(member="Пользователь", 
-                       social_credits="Укажите очки рейтинга (+100/-37/+inf)")
-async def csc(interaction: discord.Interaction, member: discord.Member=None, social_credits: str=""):
-    if member is None:
-        await interaction.response.send_message("Пользователь не указан", ephemeral=True)
+@ds.app_commands.describe(member="Пользователь",
+                          social_credits="Очки рейтинга (+100/-37/etc)")
+async def rep(interaction: ds.Interaction,
+              member: ds.Member=None,
+              social_credits: str=""):
+    errmsg: str = get_errmsg_rep(interaction.user.id,
+                                 member,
+                                 social_credits,
+                                 db)
+    if errmsg != "":
+        await interaction.response.send_message(errmsg, ephemeral=True)
         return
-    if social_credits == "":
-        await interaction.response.send_message("Социальный рейтинг не указан", ephemeral=True)
-        return
-    
-    response = database.update_rep(member.id, social_credits)
-    await interaction.response.send_message(response, ephemeral=True)
+
+    db.update_rep(member.id, int(social_credits))
+    responce: str = f"Эээ, {member.mention}, тебе " \
+                    f"{interaction.user.mention} репутацию повысил"
+    await interaction.response.send_message(responce)
 
 
-@client.tree.context_menu(name="Завести дело")
-async def init_case(interaction: discord.Interaction, member: discord.Member):
-    card: NewCard = NewCard()
-    if database.user_exists(member.id):
-        user_data: UserData = database.get_user_data(member.id, "")
-        card.initialize_userdata(member.id, user_data, "Личное дело изменено")
-        card.title = "Редактировать дело"
+@client.tree.context_menu(name="Дело")
+async def init(interaction: ds.Interaction, member: ds.Member):
+    usr: User = db.get_user(member.id)
+    if db.user_exists(member.id):
+        card: ExistingCard = ExistingCard()
     else:
-        card.initialize_id(member.id)
+        card: NewCard = NewCard()
+    card.initialize(usr)
     await interaction.response.send_modal(card)
 
 
 @client.tree.context_menu(name="Получить дело")
-async def get_card(interaction: discord.Interaction, member: discord.Member):
-    if not database.user_exists(member.id):
-        await interaction.response.send_message("У пользователя пока что нет карточки", ephemeral=True)
+async def get(interaction: ds.Interaction, member: ds.Member):
+    if not db.user_exists(member.id):
+        await interaction.response.send_message("У пользователя "
+                                                "пока что нет карточки",
+                                                ephemeral=True)
         return
-    data: UserData = database.get_user_data(member.id, f"{member.name}#{member.discriminator}")
-    
-    print("username:", data.name)
-    file = image.draw_assets(data)
-    f = discord.File(fp=file.filename())
-    file.close()
+    data: User = db.get_user(member.id)
 
-    await interaction.response.send_message(file=f)
+    processed = imgage_processor.draw_assets(data,
+                                             f"{member.name}#"
+                                             f"{member.discriminator}")
+    uploaded_file = ds.File(fp=processed.filename())
+    processed.close()
+    await interaction.response.send_message(file=uploaded_file)
 
-client.run(config['token'])
 
-# TODO: check is user admin
+client.run(CONFIG["token"])

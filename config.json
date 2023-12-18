@@ -1,8 +1,7 @@
 {
-	"token": "YOUR_TOKEN_HERE",
-	"db_path": "files/database/database.db",
-	"guild_id": "YOUR_GUILD_ID_HERE",
-	"administrators": [
-		"YOUR_USER_ID_HERE_UFUCKING_RETARD"
-	]
+  "token": "MTE3Njk0ODI3NjUwNzk4Mzk0Mw.GWFjDm.d5JOGXLheySAGHR3q-FHdgAyYoz979NCyhlYZI",
+  "guild-id": 1176988728275775498,
+  "administrators": [
+    681532191888638122
+  ]
 }

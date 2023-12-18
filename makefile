@@ -1,4 +1,4 @@
-ifeq ($(OS),Windows_NT)
+ifeq ($(OS), Windows_NT)
 	PYTHON_PIP = pip
 	PYTHON     = python
 else
@@ -7,11 +7,13 @@ else
 endif
 
 install:
-	$(PYTHON_PIP) install -r requirements.txt
+	sh venv/bin/activate && $(PYTHON_PIP) install -r requirements.txt
 
 run:
-	$(PYTHON) src/main.py
+	sh venv/bin/activate && $(PYTHON) src/main.py
 
 env:
 	$(PYTHON) -m venv venv
-	source venv/bin/activate
+
+test:
+	sh venv/bin/activate && $(PYTHON) src/check-health.py

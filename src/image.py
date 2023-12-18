@@ -1,73 +1,86 @@
-from PIL import Image, ImageDraw, ImageFont
-from uuid import uuid4
-from os import remove
-from random import randint
+from PIL import ImageFont, Image, ImageDraw
+from constants import PATHS, Positions
+from helpers import TmpImg, User, iter_arrs, print_position, print_angle, rating_to_draw
 
-from helpers.const import UserData, Assets, Positions, Fonts
-from helpers.helpers import iter_arrs
 
-class TmpImg:
+class ImgProcessor:
     def __init__(self) -> None:
-        self._fn = f"files/tmp/{uuid4()}.png"
-    
-    def close(self) -> None:
-        remove(self._fn)
-        
-    def filename(self) -> str:
-        return self._fn
+        self._headings: ImageFont = ImageFont.truetype(PATHS["headings"], 35)
+        self._plain: ImageFont = ImageFont.truetype(PATHS["plain"], 24)
 
-
-class ImageProcessor:
-    def __init__(self) -> None:
-        self._headings: ImageFont = ImageFont.truetype(Fonts.HEADINGS, 35)
-        self._plain: ImageFont = ImageFont.truetype(Fonts.PLAIN, 24)
-        self._assets: dict[ImageProcessor] = dict()
-    
-    def __del__(self) -> None:
-        for el in self._assets.values():
-            el.close()
-    
-    def _parse_text(self, text: str) -> list[str]:
-        text: list[str] = text.split()
-        out: list[str] = list()
-
-        first_line: list[str] = list()
-        w_index: int = 0
-
-        for i, word in enumerate(text):
-            if self._plain.getlength(" ".join(" ".join(first_line))) < Positions.FIRST_ROW_LEN:
-                first_line.append(word)
-                w_index = i
-        text = text[w_index + 1:]
-        out.append(" ".join(first_line))
-
-        while text != list():
-            next_line = list()
-            for i, word in enumerate(text):
-                if self._plain.getlength(" ".join(" ".join(next_line))) < Positions.NEXT_ROW_LEN:
-                    next_line.append(word)
-                    w_index = i
-            text = text[w_index + 1:]
-            out.append(" ".join(next_line))
-        return out
-
-    def draw_assets(self, user: UserData) -> TmpImg:
+    def draw_assets(self, usr: User, username: str) -> TmpImg:
         image: TmpImg = TmpImg()
-        with Image.open(Assets.CARD).convert("RGBA") as editable_image:
-            d = ImageDraw.Draw(editable_image)
-            d.text(Positions.NAME, user.name, font=self._headings, fill=(0, 0, 0, 255))
-            
-            for pos, txt in iter_arrs(Positions.SPECIAL_SIGNS, self._parse_text(user.special_signs)):
-                d.text(pos, txt, font=self._plain, fill=(0, 0, 0, 255))
-                
-            for i, p in enumerate(user.get_paths()):
-                with Image.open(p).convert("RGBA") as pastable:
-                    editable_image.paste(im=pastable, box=Positions.PHOTO_CARDS[i], mask=pastable)
+        with Image.open(PATHS["card"]).convert("RGBA") as canvas:
+            d = ImageDraw.Draw(canvas)
 
-            with Image.open(Assets.PRINT).convert("RGBA") as card:
-                card = card.resize(Positions.PRINT_SIZE)
-                card = card.rotate(Positions.PRINT_ANGLE())
-                editable_image.paste(im=card, box=Positions.PRINT_POS(), mask=card)
-                
-            editable_image.save(image.filename(), "PNG")
+            # Draw username
+            d.text(Positions.USERNAME,
+                   username,
+                   font=self._headings,
+                   fill=(0, 0, 0, 255))
+
+            # Draw special_signs
+            for pos, txt in iter_arrs(Positions.SPECIAL_SIGNS,
+                                      self._parse_text(usr.special_signs)):
+                d.text(pos, txt, font=self._plain, fill=(0, 0, 0, 255))
+
+            # Draw badges
+            for i, p in enumerate(usr.get_paths()):
+                if i == len(Positions.BADGES):
+                    break
+                with Image.open(p).convert("RGBA") as badge:
+                    canvas.paste(im=badge,
+                                 box=Positions.BADGES[i],
+                                 mask=badge)
+
+            # Draw print
+            with Image.open(PATHS["print"]).convert("RGBA") as yoba_print:
+                yoba_print = yoba_print.resize(Positions.PRINT_SIZE,
+                                               Image.Resampling.LANCZOS)
+                yoba_print = yoba_print.rotate(print_angle())
+
+                canvas.paste(im=yoba_print,
+                             box=print_position(),
+                             mask=yoba_print)
+
+            # Draw social credits
+            d.text(Positions.SOCIAL_CREDITS,
+                   rating_to_draw(usr),
+                   font=self._headings,
+                   fill=(0, 0, 0, 255))
+
+            canvas.save(image.filename(), "PNG")
         return image
+
+    def _parse_text(self, text: str) -> list[str]:
+        def length(arr: list[str], word: str):
+            text: str = " ".join(arr) + " " + word
+            return self._plain.getlength(text)
+
+        text: list[str] = text.split(" ")
+        out: list[str] = list()
+        row: list[str] = list()
+        cut: int = 0
+
+        for i, w in enumerate(text):
+            cut = i
+            if length(row, w) >= Positions.ROWS[0]:
+                break
+            else:
+                row.append(w)
+        out.append(" ".join(row))
+        text = text[cut + 1:]
+        row = list()
+
+        for _ in range(2):
+            for i, w in enumerate(text):
+                cut = i
+                if length(row, w) >= Positions.ROWS[1]:
+                    break
+                else:
+                    row.append(w)
+            text = text[cut + 1:]
+            out.append(" ".join(row))
+            row = list()
+
+        return out
